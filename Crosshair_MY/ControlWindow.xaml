@@ -1,11 +1,60 @@
 ﻿<Window x:Class="Crosshair_MY.ControlWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Crosshair X - Designer" Height="650" Width="900"
+        Title="Crosshair My" Height="700" Width="950"
         Background="Transparent" WindowStyle="None" AllowsTransparency="True"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown"
+        Icon="logo.ico">
 
     <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#333"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#333"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#0A0A0A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="ItemBorder" Background="{TemplateBinding Background}" Padding="10,5">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#333"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="MenuButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#888"/>
@@ -46,12 +95,6 @@
                         <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="5">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="btnBorder" Property="Background" Value="#333"/>
-                                <Setter Property="Foreground" Value="White"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -90,17 +133,24 @@
 
             <Border Grid.Column="0" Background="#0A0A0A" CornerRadius="20,0,0,20">
                 <StackPanel Margin="0,30,0,0">
-                    <TextBlock Text="CROSSHAIR MY" Foreground="#FF4500" FontSize="22" FontWeight="ExtraBold" HorizontalAlignment="Center" Margin="0,0,0,40">
+                    <Border Width="80" Height="80" CornerRadius="40" HorizontalAlignment="Center" Margin="0,0,0,15" BorderBrush="#FF4500" BorderThickness="2">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#FF4500" BlurRadius="15" ShadowDepth="0"/>
+                        </Border.Effect>
+                        <Border.Background>
+                            <ImageBrush ImageSource="logo.ico" Stretch="UniformToFill"/>
+                        </Border.Background>
+                    </Border>
+                    <TextBlock Text="CROSSHAIR MY" Foreground="#FF4500" FontSize="20" FontWeight="ExtraBold" HorizontalAlignment="Center" Margin="0,0,0,40">
                         <TextBlock.Effect>
                             <DropShadowEffect Color="#FF4500" BlurRadius="10" ShadowDepth="0"/>
                         </TextBlock.Effect>
                     </TextBlock>
-
                     <Button x:Name="BtnEssentials" Content="Essentials" Style="{StaticResource MenuButtonStyle}" Click="Nav_Click"/>
                     <Button x:Name="BtnEditor" Content="Editor" Style="{StaticResource MenuButtonStyle}" Click="Nav_Click"/>
                     <Button x:Name="BtnProfiles" Content="Profiles" Style="{StaticResource MenuButtonStyle}" Click="Nav_Click"/>
                     <Button x:Name="BtnSettings" Content="Settings" Style="{StaticResource MenuButtonStyle}" Click="Nav_Click"/>
-
+                    <Button x:Name="BtnMaker" Content="Workshop" Style="{StaticResource MenuButtonStyle}" Click="Nav_Click"/>
                     <Separator Background="#1A1A1A" Margin="20,20"/>
                 </StackPanel>
             </Border>
@@ -113,101 +163,206 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-20,-20,0">
-                    <Button Content="—" Style="{StaticResource WindowControlStyle}" Click="Minimize_Click" ToolTip="Minimize"/>
-                    <Button Content="☐" Style="{StaticResource WindowControlStyle}" Click="Maximize_Click" ToolTip="Maximize"/>
-                    <Button Content="✕" Style="{StaticResource CloseButtonStyle}" Click="Close_Click" ToolTip="Close"/>
+                    <Button Content="—" Style="{StaticResource WindowControlStyle}" Click="Minimize_Click"/>
+                    <Button Content="☐" Style="{StaticResource WindowControlStyle}" Click="Maximize_Click"/>
+                    <Button Content="✕" Style="{StaticResource CloseButtonStyle}" Click="Close_Click"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                     <TextBlock x:Name="TxtPageTitle" Text="EDITOR" Foreground="White" FontSize="32" FontWeight="Bold"/>
                     <TextBlock x:Name="TxtPageSubtitle" Text="STUDIO" Foreground="#FF4500" FontSize="12" FontWeight="Bold" Margin="10,0,0,15" VerticalAlignment="Center" Opacity="0.8"/>
                 </StackPanel>
 
-                <Grid x:Name="View_Essentials" Grid.Row="1" Visibility="Collapsed" Margin="0,20,0,0">
+                <Grid x:Name="View_Essentials" Grid.Row="1" Visibility="Collapsed" Margin="0,10,0,0">
                     <StackPanel>
-                        <TextBlock Text="QUICK ACTIONS" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,0,0,15" Opacity="0.7"/>
-                        <Button Content="Toggle Crosshair (F2)" Height="50" Background="#1A1A1A" Foreground="White" BorderThickness="0" Margin="0,0,0,10" Click="Action_Toggle_Click">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="8"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
+                        <TextBlock Text="DASHBOARD STATS" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,0,0,15" Opacity="0.7"/>
+                        <UniformGrid Columns="2" Margin="0,0,0,20">
+                            <Border Background="#1A1A1A" CornerRadius="12" Padding="15" Margin="0,0,5,0">
+                                <StackPanel>
+                                    <TextBlock Text="CROSSHAIR STATUS" Foreground="#666" FontSize="10" FontWeight="Bold"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                        <Border Width="10" Height="10" CornerRadius="5" Background="#00FF00" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <TextBlock x:Name="StatusLabel" Text="ACTIVE" Foreground="White" FontSize="18" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="ActiveProfileLabel" Text="Default Profile" Foreground="#888" FontSize="12" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#1A1A1A" CornerRadius="12" Padding="15" Margin="5,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="PERFORMANCE" Foreground="#666" FontSize="10" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtSessionTime" Text="00:00:00" Foreground="White" FontSize="16" FontWeight="Bold" Margin="0,5,0,0"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="RAM: " Foreground="#555" FontSize="12" FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtRamUsage" Text="0 MB" Foreground="#FF4500" FontSize="12" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
                     </StackPanel>
                 </Grid>
 
-                <ScrollViewer x:Name="View_Editor" Grid.Row="1" VerticalScrollBarVisibility="Hidden" Margin="0,10,0,0" Visibility="Visible">
-                    <StackPanel>
-                        <Grid Margin="0,0,0,20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                <Grid x:Name="View_Maker" Grid.Row="1" Visibility="Collapsed" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="200"/>
+                    </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="Color" Foreground="#666" Margin="0,0,0,5"/>
-                                <ComboBox x:Name="ColorCombo" SelectionChanged="ColorCombo_SelectionChanged" Height="35" Background="#252525" Foreground="White" BorderBrush="#333" BorderThickness="1" Padding="10,8,0,0" FontSize="14" FontWeight="Bold">
-                                    <ComboBox.Resources>
-                                        <Style TargetType="ComboBoxItem">
-                                            <Setter Property="Background" Value="#252525"/>
-                                            <Setter Property="Foreground" Value="White"/>
-                                            <Setter Property="BorderThickness" Value="0"/>
-                                        </Style>
-                                    </ComboBox.Resources>
-                                    <ComboBoxItem Content="Red"/>
-                                    <ComboBoxItem Content="Green"/>
-                                    <ComboBoxItem Content="Cyan"/>
-                                    <ComboBoxItem Content="Yellow"/>
-                                </ComboBox>
-                            </StackPanel>
+                    <Border Background="#0A0A0A" CornerRadius="15" BorderBrush="#252525" BorderThickness="2" Margin="0,0,15,0">
+                        <UniformGrid x:Name="DrawingGrid" Rows="32" Columns="32" Background="Transparent"/>
+                    </Border>
 
-                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                <TextBlock Text="Style" Foreground="#666" Margin="0,0,0,5"/>
-                                <ComboBox x:Name="StyleCombo" SelectionChanged="StyleCombo_SelectionChanged" Height="35" Background="#252525" Foreground="White" BorderBrush="#333" BorderThickness="1" Padding="10,8,0,0" FontSize="14" FontWeight="SemiBold">
-                                    <ComboBox.Resources>
-                                        <Style TargetType="ComboBoxItem">
-                                            <Setter Property="Background" Value="#252525"/>
-                                            <Setter Property="Foreground" Value="White"/>
-                                            <Setter Property="BorderThickness" Value="0"/>
-                                        </Style>
-                                    </ComboBox.Resources>
-                                </ComboBox>
-                            </StackPanel>
-                        </Grid>
-
-                        <TextBlock Text="DIMENSIONS" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,10,0,10" Opacity="0.7"/>
-                        <TextBlock Text="Opacity" Foreground="#AAA"/>
-                        <DockPanel>
-                            <TextBlock Text="{Binding ElementName=OpacitySlider, Path=Value, StringFormat={}{0:0}%}" Foreground="#FF4500" Width="40" DockPanel.Dock="Right" TextAlignment="Right"/>
-                            <Slider x:Name="OpacitySlider" Minimum="0" Maximum="100" Value="100" ValueChanged="Settings_Changed" IsSnapToTickEnabled="True"/>
-                        </DockPanel>
-
-                        <TextBlock Text="Length" Foreground="#AAA"/>
-                        <DockPanel>
-                            <TextBlock Text="{Binding ElementName=LengthSlider, Path=Value, StringFormat={}{0:0}}" Foreground="#FF4500" Width="40" DockPanel.Dock="Right" TextAlignment="Right"/>
-                            <Slider x:Name="LengthSlider" Minimum="1" Maximum="100" ValueChanged="Settings_Changed" TickFrequency="1" IsSnapToTickEnabled="True"/>
-                        </DockPanel>
-
-                        <TextBlock Text="Thickness" Foreground="#AAA"/>
-                        <DockPanel>
-                            <TextBlock Text="{Binding ElementName=ThickSlider, Path=Value, StringFormat={}{0:0}}" Foreground="#FF4500" Width="40" DockPanel.Dock="Right" TextAlignment="Right"/>
-                            <Slider x:Name="ThickSlider" Minimum="1" Maximum="20" ValueChanged="Settings_Changed" IsSnapToTickEnabled="True"/>
-                        </DockPanel>
-
-                        <TextBlock Text="Gap" Foreground="#AAA"/>
-                        <DockPanel Margin="0,0,0,20">
-                            <TextBlock Text="{Binding ElementName=GapSlider, Path=Value, StringFormat={}{0:0}}" Foreground="#FF4500" Width="40" DockPanel.Dock="Right" TextAlignment="Right"/>
-                            <Slider x:Name="GapSlider" Minimum="0" Maximum="50" ValueChanged="Settings_Changed" IsSnapToTickEnabled="True"/>
-                        </DockPanel>
-
-                        <TextBlock Text="OUTLINE (NEW)" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,10,0,10" Opacity="0.7"/>
-                        <TextBlock Text="Outline Thickness" Foreground="#AAA"/>
-                        <DockPanel>
-                            <TextBlock Text="{Binding ElementName=OutlineSlider, Path=Value, StringFormat={}{0:0}}" Foreground="#FF4500" Width="40" DockPanel.Dock="Right" TextAlignment="Right"/>
-                            <Slider x:Name="OutlineSlider" Minimum="0" Maximum="5" Value="0" ValueChanged="Settings_Changed" IsSnapToTickEnabled="True"/>
-                        </DockPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="TOOLS" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <Button Content="Clear Canvas" Background="#333" Foreground="White" Height="35" Click="ClearCanvas_Click" Margin="0,0,0,10"/>
+                        <Button x:Name="BtnImportPNG" Content="Import PNG" Background="#252525" Foreground="#00BFFF" Height="35" Click="ImportToWorkshop_Click" Margin="0,0,0,10"/>
+                        <Separator Background="#1A1A1A" Margin="0,10"/>
+                        <Button Content="USE AS CROSSHAIR" Background="#FF4500" Foreground="White" FontWeight="Bold" Height="45" Click="ApplyWorkshop_Click"/>
                     </StackPanel>
-                </ScrollViewer>
+                </Grid>
+
+                <Grid x:Name="View_Editor" Grid.Row="1" Visibility="Visible" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="#1A1A1A" CornerRadius="10" Padding="10" Margin="0,0,15,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="LAYERS" Foreground="#666" FontSize="11" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <ListBox x:Name="ListLayers" Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="White" SelectionChanged="ListLayers_SelectionChanged"/>
+                            <UniformGrid Grid.Row="2" Columns="2" Margin="0,10,0,0">
+                                <Button Content="+" Background="#333" Foreground="#00FF00" Height="30" Click="AddLayer_Click"/>
+                                <Button Content="-" Background="#333" Foreground="#FF0000" Height="30" Click="RemoveLayer_Click"/>
+                            </UniformGrid>
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Hidden">
+                        <StackPanel>
+                            <TextBlock Text="LAYER SETTINGS" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,0,0,10" Opacity="0.7"/>
+
+                            <Grid Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                    <TextBlock Text="Color (HEX)" Foreground="#666" Margin="0,0,0,5"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border x:Name="ColorPreview" Background="#00FF00" CornerRadius="5" Margin="0,0,5,0" BorderBrush="#333" BorderThickness="1" Cursor="Hand" MouseLeftButtonUp="ColorPreview_MouseUp"/>
+                                        <Popup x:Name="ColorPalettePopup" PlacementTarget="{Binding ElementName=ColorPreview}" Placement="Bottom" StaysOpen="False" PopupAnimation="Fade">
+                                            <Border Background="#1A1A1A" BorderBrush="#333" BorderThickness="1" CornerRadius="8" Padding="10" Width="220">
+                                                <StackPanel>
+                                                    <Grid x:Name="ColorCanvas" Width="200" Height="150" Cursor="Cross" MouseLeftButtonDown="ColorCanvas_MouseDown" MouseMove="ColorCanvas_MouseMove">
+                                                        <Rectangle x:Name="CanvasBackground" Fill="Red"/>
+                                                        <Rectangle>
+                                                            <Rectangle.Fill>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                    <GradientStop Color="White" Offset="0"/>
+                                                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                                                </LinearGradientBrush>
+                                                            </Rectangle.Fill>
+                                                        </Rectangle>
+                                                        <Rectangle>
+                                                            <Rectangle.Fill>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="#00000000" Offset="0"/>
+                                                                    <GradientStop Color="Black" Offset="1"/>
+                                                                </LinearGradientBrush>
+                                                            </Rectangle.Fill>
+                                                        </Rectangle>
+                                                        <Canvas IsHitTestVisible="False">
+                                                            <Ellipse x:Name="ColorCursor" Width="10" Height="10" Stroke="White" StrokeThickness="2" Margin="-5,-5"/>
+                                                        </Canvas>
+                                                    </Grid>
+                                                    <Grid Margin="0,10,0,0" Height="20">
+                                                        <Rectangle x:Name="HueSlider" Cursor="Hand" MouseLeftButtonDown="HueSlider_MouseDown" MouseMove="HueSlider_MouseMove">
+                                                            <Rectangle.Fill>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                    <GradientStop Color="#FF0000" Offset="0.0"/>
+                                                                    <GradientStop Color="#FFFF00" Offset="0.16"/>
+                                                                    <GradientStop Color="#00FF00" Offset="0.33"/>
+                                                                    <GradientStop Color="#00FFFF" Offset="0.5"/>
+                                                                    <GradientStop Color="#0000FF" Offset="0.66"/>
+                                                                    <GradientStop Color="#FF00FF" Offset="0.83"/>
+                                                                    <GradientStop Color="#FF0000" Offset="1.0"/>
+                                                                </LinearGradientBrush>
+                                                            </Rectangle.Fill>
+                                                        </Rectangle>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </Border>
+                                        </Popup>
+                                        <TextBox x:Name="TxtHexColor" Grid.Column="1" Text="#FF00FF00" Height="35" MaxLength="9" TextChanged="TxtHexColor_TextChanged"/>
+                                    </Grid>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                    <TextBlock Text="Style" Foreground="#666" Margin="0,0,0,5"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="StyleCombo" SelectionChanged="StyleCombo_SelectionChanged" Height="35"/>
+                                        <Button x:Name="BtnBrowseImage" Grid.Column="1" Content="📂" Width="35" Height="35" Background="#252525" Foreground="#FF4500" FontWeight="Bold" Margin="5,0,0,0" Visibility="Collapsed" Click="BtnBrowseImage_Click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Margin="0,5,0,0">
+                                <TextBlock Text="Size" Foreground="#666"/>
+                                <TextBlock x:Name="LblLength" Text="10" Foreground="#FF4500" HorizontalAlignment="Right" FontWeight="Bold"/>
+                            </Grid>
+                            <Slider x:Name="LengthSlider" Minimum="1" Maximum="100" ValueChanged="Settings_Changed"/>
+
+                            <Grid Margin="0,5,0,0">
+                                <TextBlock Text="Thickness" Foreground="#666"/>
+                                <TextBlock x:Name="LblThick" Text="2" Foreground="#FF4500" HorizontalAlignment="Right" FontWeight="Bold"/>
+                            </Grid>
+                            <Slider x:Name="ThickSlider" Minimum="1" Maximum="50" ValueChanged="Settings_Changed"/>
+
+                            <Grid Margin="0,5,0,0">
+                                <TextBlock Text="Gap" Foreground="#666"/>
+                                <TextBlock x:Name="LblGap" Text="4" Foreground="#FF4500" HorizontalAlignment="Right" FontWeight="Bold"/>
+                            </Grid>
+                            <Slider x:Name="GapSlider" Minimum="0" Maximum="100" ValueChanged="Settings_Changed"/>
+
+                            <Grid Margin="0,5,0,0">
+                                <TextBlock Text="Opacity" Foreground="#666"/>
+                                <TextBlock x:Name="LblOpacity" Text="100%" Foreground="#FF4500" HorizontalAlignment="Right" FontWeight="Bold"/>
+                            </Grid>
+                            <Slider x:Name="OpacitySlider" Minimum="0" Maximum="100" ValueChanged="Settings_Changed"/>
+
+                            <Grid Margin="0,5,0,0">
+                                <TextBlock Text="Rotation" Foreground="#666"/>
+                                <TextBlock x:Name="LblRotation" Text="0°" Foreground="#FF4500" HorizontalAlignment="Right" FontWeight="Bold"/>
+                            </Grid>
+                            <Slider x:Name="RotationSlider" Minimum="0" Maximum="360" ValueChanged="Settings_Changed"/>
+
+                            <Separator Background="#1A1A1A" Margin="0,15"/>
+                            <Grid Margin="0,5,0,0">
+                                <TextBlock Text="Outline" Foreground="#888"/>
+                                <CheckBox x:Name="ChkOutline" Content="Enable" Foreground="White" HorizontalAlignment="Right" IsChecked="True" Click="ChkOutline_Click"/>
+                            </Grid>
+                            <Grid Margin="0,15,0,0">
+                                <TextBlock Text="Outline Thickness" Foreground="#666"/>
+                                <TextBlock x:Name="LblOutlineThick" Text="1" Foreground="#FF4500" HorizontalAlignment="Right" FontWeight="Bold"/>
+                            </Grid>
+                            <Slider x:Name="OutlineSlider" Minimum="0" Maximum="10" Value="1" ValueChanged="Settings_Changed" Margin="0,5,0,10"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
 
                 <Grid x:Name="View_Profiles" Grid.Row="1" Visibility="Collapsed" Margin="0,10,0,0">
                     <Grid.RowDefinitions>
@@ -215,7 +370,6 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-
                     <StackPanel Grid.Row="0" Margin="0,0,0,20">
                         <TextBlock Text="SAVE NEW PROFILE" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,0,0,10" Opacity="0.7"/>
                         <Grid>
@@ -223,125 +377,66 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="80"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="TxtProfileName" Text="My Cool Crosshair" Height="35" Background="#252525" Foreground="White" BorderThickness="0" Padding="10,8" VerticalContentAlignment="Center"/>
-                            <Button Content="SAVE" Grid.Column="1" Background="#FF4500" Foreground="White" BorderThickness="0" Margin="10,0,0,0" FontWeight="Bold" Click="SaveProfile_Click">
+                            <TextBox x:Name="TxtProfileName" Text="My New Preset" Height="40" Padding="10,0" VerticalContentAlignment="Center">
+                                <TextBox.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </TextBox.Resources>
+                            </TextBox>
+                            <Button Content="SAVE" Grid.Column="1" Background="#FF4500" Foreground="White" Margin="10,0,0,0" FontWeight="Bold" Click="SaveProfile_Click" Height="40">
                                 <Button.Resources>
                                     <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="5"/>
+                                        <Setter Property="CornerRadius" Value="8"/>
                                     </Style>
                                 </Button.Resources>
                             </Button>
                         </Grid>
                     </StackPanel>
-
-                    <Border Grid.Row="1" Background="#1A1A1A" CornerRadius="10" Padding="10">
-                        <ListBox x:Name="ListProfiles" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="14" SelectionChanged="ListProfiles_SelectionChanged">
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="ListBoxItem">
-                                    <Setter Property="Padding" Value="10"/>
-                                    <Setter Property="Margin" Value="0,2"/>
-                                    <Setter Property="Cursor" Value="Hand"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListBoxItem">
-                                                <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
-                                                    <ContentPresenter/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsSelected" Value="True">
-                                                        <Setter TargetName="bd" Property="Background" Value="#FF4500"/>
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                        <Setter Property="FontWeight" Value="Bold"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="bd" Property="Background" Value="#333"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                        </ListBox>
+                    <Border Grid.Row="1" Background="#1A1A1A" CornerRadius="12" Padding="10">
+                        <ListBox x:Name="ListProfiles" Background="Transparent" BorderThickness="0" Foreground="White" SelectionChanged="ListProfiles_SelectionChanged"/>
                     </Border>
-
-                    <Button Grid.Row="2" Content="DELETE SELECTED" Background="#333" Foreground="#FF4500" Height="35" BorderThickness="0" Margin="0,15,0,0" FontWeight="Bold" Click="DeleteProfile_Click">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
+                    <StackPanel Grid.Row="2" Margin="0,15,0,0">
+                        <UniformGrid Columns="3">
+                            <Button Content="COPY" Background="#252525" Foreground="White" Height="40" Margin="0,0,5,0" Click="ExportProfile_Click"/>
+                            <Button Content="IMPORT" Background="#252525" Foreground="#00FF00" Height="40" Margin="5,0,5,0" Click="ImportProfile_Click"/>
+                            <Button Content="DELETE" Background="#351010" Foreground="#FF4500" Height="40" Margin="5,0,0,0" Click="DeleteProfile_Click"/>
+                        </UniformGrid>
+                    </StackPanel>
                 </Grid>
 
                 <Grid x:Name="View_Settings" Grid.Row="1" Visibility="Collapsed" Margin="0,10,0,0">
                     <StackPanel>
-
                         <TextBlock Text="GENERAL" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,0,0,10" Opacity="0.7"/>
                         <Border Background="#1A1A1A" CornerRadius="10" Padding="15">
                             <StackPanel>
-                                <CheckBox x:Name="ChkStartup" Content="Run on Windows Startup" Foreground="White" FontSize="14" Margin="0,0,0,5" Checked="ChkStartup_Changed" Unchecked="ChkStartup_Changed">
-                                    <CheckBox.LayoutTransform>
-                                        <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-                                    </CheckBox.LayoutTransform>
-                                </CheckBox>
-                                <TextBlock Text="Automatically start Crosshair X when you turn on your PC." Foreground="#666" FontSize="12" Margin="24,0,0,15"/>
-
-                                <CheckBox x:Name="ChkMinimized" Content="Start Minimized" Foreground="White" FontSize="14" Margin="0,0,0,5" Checked="ChkMinimized_Changed" Unchecked="ChkMinimized_Changed">
-                                    <CheckBox.LayoutTransform>
-                                        <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-                                    </CheckBox.LayoutTransform>
-                                </CheckBox>
-                                <TextBlock Text="Launch the app quietly in the background (Menu hidden)." Foreground="#666" FontSize="12" Margin="24,0,0,0"/>
+                                <CheckBox x:Name="ChkStartup" Content="Run on Windows Startup" Foreground="White" Margin="0,0,0,5" Click="ChkStartup_Changed"/>
+                                <CheckBox x:Name="ChkMinimized" Content="Start Minimized" Foreground="White" Margin="0,0,0,5" Checked="ChkMinimized_Changed" Unchecked="ChkMinimized_Changed"/>
                             </StackPanel>
                         </Border>
-
-                        <TextBlock Text="ABOUT" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,20,0,10" Opacity="0.7"/>
-                        <Border Background="#1A1A1A" CornerRadius="10" Padding="15">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel>
-                                    <TextBlock Text="Crosshair My v1.0" Foreground="White" FontWeight="Bold" FontSize="16"/>
-                                    <TextBlock Text="Developed by You" Foreground="#888" Margin="0,5,0,0"/>
-                                </StackPanel>
-
-                                <Button Grid.Column="1" Content="CHECK FOR UPDATES" Background="#252525" Foreground="White" Padding="15,0" Height="35" BorderThickness="0" Cursor="Hand" Click="Update_Click">
-                                    <Button.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="5"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
-                            </Grid>
-                        </Border>
-
-                        <TextBlock Text="SYSTEM" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,20,0,10" Opacity="0.7"/>
+                        <TextBlock Text="INFORMATION" Foreground="#FF4500" FontSize="11" FontWeight="Bold" Margin="0,20,0,10" Opacity="0.7"/>
                         <Border Background="#1A1A1A" CornerRadius="10" Padding="15">
                             <StackPanel>
-                                <DockPanel Margin="0,0,0,10">
-                                    <TextBlock Text="Resolution" Foreground="#AAA"/>
-                                    <TextBlock x:Name="TxtResolution" Text="1920x1080" Foreground="White" FontWeight="Bold" HorizontalAlignment="Right"/>
-                                </DockPanel>
-                                <Separator Background="#333" Margin="0,5,0,10"/>
-                                <DockPanel>
-                                    <TextBlock Text="Renderer" Foreground="#AAA"/>
-                                    <TextBlock Text="WPF / DirectX" Foreground="White" FontWeight="Bold" HorizontalAlignment="Right"/>
-                                </DockPanel>
+                                <TextBlock x:Name="TxtAppVersion" Text="Crosshair MY v2.5" Foreground="White" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtResolution" Text="1920x1080" Foreground="#444" FontSize="11" FontWeight="Bold" Margin="0,15,0,0"/>
                             </StackPanel>
                         </Border>
-
                     </StackPanel>
                 </Grid>
 
                 <Border Grid.Row="2" Background="#1A1A1A" Padding="15,10" CornerRadius="10" Margin="0,20,0,0">
-                    <Grid>
-                        <TextBlock Text="Hotkeys: F2 Toggle | F3 Exit" Foreground="#666" VerticalAlignment="Center"/>
-                        <Button Content="RESET ALL" Click="Reset_Click" HorizontalAlignment="Right" Background="Transparent" Foreground="#FF4500" BorderThickness="0" FontWeight="Bold" Cursor="Hand"/>
-                    </Grid>
+                    <TextBlock Text="F2: Toggle Overlay | F3: Exit | F4: Reset" Foreground="#666" FontSize="11" VerticalAlignment="Center"/>
+                </Border>
+            </Grid>
+
+            <Grid x:Name="CustomMessageOverlay" Grid.ColumnSpan="2" Visibility="Collapsed">
+                <Border Background="#CC000000" MouseLeftButtonDown="BtnCloseMessage_Click"/>
+                <Border Width="350" Height="200" Background="#121212" CornerRadius="15" BorderBrush="#FF4500" BorderThickness="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="MsgTitle" Text="INFO" Foreground="#FF4500" HorizontalAlignment="Center" FontWeight="Bold"/>
+                        <TextBlock x:Name="MsgText" Text="Success" Foreground="White" HorizontalAlignment="Center" Margin="0,10"/>
+                        <Button Content="OK" Background="#FF4500" Foreground="White" Width="80" Height="30" Click="BtnCloseMessage_Click"/>
+                    </StackPanel>
                 </Border>
             </Grid>
         </Grid>
